@@ -1,13 +1,13 @@
 "use client";
 import { Box, Grid, Typography } from "@mui/material";
+import HomePage from "../page";
 
-const Layout = () => {
+const DashBoard = () => {
   return (
-    <Box flex={1} px={2} >
+    <HomePage>
+    <Box component="main" ml="20%" flex={1} px={2} >
       <Box display="flex" flexDirection="column" gap={2}>
-        <Box bgcolor="white" alignItems="stretch" p={2} borderRadius={1} boxShadow={2}>
-          <Typography color="black" fontSize={14}>Admin/Dashboard</Typography>
-        </Box>
+        
         <Grid container spacing={2}>
           <Grid item xs={4} lg={4}>
             <Box bgcolor="white" p={2} borderRadius={1} boxShadow={2}>
@@ -29,7 +29,8 @@ const Layout = () => {
         </Grid>
       </Box>
     </Box>
+    </HomePage>
   );
 };
 
-export default Layout;
+export default DashBoard;
