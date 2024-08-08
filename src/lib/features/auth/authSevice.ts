@@ -11,10 +11,17 @@ export const authApi = createApi({
         url: 'login',
         method: 'POST',
         body: credentials,
-      }),
+      })
     }),
+    signup: builder.mutation({
+      query:(credentials)=>({
+        url: 'signup',
+        method: 'POST',
+        body: credentials,
+      })
+    })
   }),
 })
 
 // auto-generated based on the defined endpoints
-export const { useLoginMutation } = authApi
+export const { useLoginMutation, useSignupMutation } = authApi

@@ -28,7 +28,7 @@ const OwnerList = () => {
         columns: [
           {
             accessorFn: (row) => `${row.fullName}`,
-            id: "fullName", //id is still required when using accessorFn instead of accessorKey
+            id: "fullName",
             header: "Owner",
             size: 200,
             Cell: ({ renderedCellValue, row }) => (
