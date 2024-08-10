@@ -10,15 +10,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Button } from "@mui/material";
 import Link from "next/link";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
@@ -27,6 +23,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { MenuRounded } from "@mui/icons-material";
+import { logout } from "@/lib/features/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 const drawerWidth = 200;
 
@@ -108,11 +106,16 @@ export default function HomePage({
 }>) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  const router = useRouter();
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
+  const handleLogout = () => {
+    logout();
+    router.replace("/auth/login");
+  }
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -422,6 +425,7 @@ export default function HomePage({
        
           {open && (<Button
             variant="contained"
+            onClick={handleLogout}
             startIcon={<LogoutRoundedIcon fontSize="small" />}
             sx={{
               p:0,
