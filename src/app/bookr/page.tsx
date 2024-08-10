@@ -100,8 +100,10 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function HomePage({
+  path,
   children,
 }: Readonly<{
+  path:string;
   children: React.ReactNode;
 }>) {
   const theme = useTheme();
@@ -116,7 +118,7 @@ export default function HomePage({
   };
 
   return (
-    <Box sx={{ display: "flex", gap:1 }}>
+    <Box height="100vh" sx={{ display: "flex", gap:1 }}>
       <CssBaseline />
       <Drawer
         variant="permanent"
@@ -435,7 +437,12 @@ export default function HomePage({
             <Typography fontSize={13}>Logout</Typography>
           </Button>)}
       </Drawer>
-      <Box component="main" height="100vh" sx={{flexGrow:1}}>
+      <Box component="main" height="95%" sx={{flexGrow:1}}>
+        <AppBar position="static" sx={{px:3, py:0.2, mt:0.2,mr:2.5, borderRadius:1}}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {path}
+          </Typography>
+        </AppBar>
         {children}
       </Box>
     </Box>

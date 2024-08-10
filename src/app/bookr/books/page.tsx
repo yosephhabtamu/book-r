@@ -135,7 +135,7 @@ const OwnerList = () => {
   });
 
   return (
-    <HomePage>
+    <HomePage path="owner/books">
       <Box component="main" ml="20%" maxWidth="80%" overflow="scroll" >
         <MaterialReactTable table={table} />
       </Box>

@@ -6,7 +6,7 @@ import React, { ReactNode } from "react";
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <Grid container sx={{ height:"100vh", margin:-0.25, padding:0 }}>
+    <Grid container m={-1} sx={{ height:"100vh", padding:0 }}>
       <Grid
         item
         xs={12}

@@ -3,27 +3,20 @@ import dynamic from "next/dynamic";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Signup from "./auth/signup/page";
 import HomePage from "./bookr/page";
-import { ThemeOptions } from "@mui/material/styles";
+import { lime, purple } from '@mui/material/colors';
 
-const themeOptions: ThemeOptions = {
+const theme = createTheme({
   palette: {
-    mode: "dark",
-    primary: {
-      main: "#171b36",
-      light: "#45495e",
-    },
-    secondary: {
-      main: "#316aa7",
-    },
+    primary: lime,
+    secondary: purple,
   },
-};
-const theme = createTheme(themeOptions);
+});
 //TODO: get the user profile and handle the permission here.
 export default function Home() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <HomePage children />
+        <HomePage path="" children />
       </ThemeProvider>
     </>
   );

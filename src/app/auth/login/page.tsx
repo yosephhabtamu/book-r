@@ -1,11 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { z } from "zod";
+import { set, z } from "zod";
 import { useRouter } from "next/navigation"; // Import useRouter
-import { Box, Button, Checkbox, FormControlLabel, TextField, Typography, Link, Divider, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+  Link,
+  Divider,
+  Stack,
+} from "@mui/material";
 import { useLoginMutation } from "@/lib/features/auth/authSevice";
-
+import {
+  setCredentials, clearCredentials
+} from "@/lib/features/auth/authSlice";
+import SnackBarWrapper from "@/app/components/snackBar";
 
 // Define your Zod schema
 const validationSchema = z.object({
@@ -18,13 +31,15 @@ export default function Login() {
   const router = useRouter(); // Initialize useRouter for navigation
   const [login, { isLoading, error }] = useLoginMutation();
 
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
+
   const [values, setValues] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
 
-  const [errors, setErrors] = useState({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -34,43 +49,59 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    // Validate the form values using Zod
     try {
-      validationSchema.parse(values);
-      setErrors({}); // Clear errors if validation passes
+     const isValid =  validationSchema.parse(values);
 
       // Proceed with the login request
       const response = await login({
-        email: values.email,
-        password: values.password,
+        email: isValid.email,
+        password: isValid.password,
       }).unwrap();
       console.log("Login successful", response);
+      setMessage("Login successful"); 
+      setSeverity("success");
+      setCredentials({
+        accessToken: response.accessToken,
+        role: response.role,
+      });
       router.push("/bookr/dashboard");
-    } catch (err:any) {
-        console.error("Unexpected error:", err);
-      }
+    } catch (err: any) {
+      console.error("Unexpected error:", err);
+      clearCredentials();
+      setMessage(err.data.message);
+      setSeverity("error");
+    }
   };
 
   return (
-    <Box alignSelf="center" display="flex" width="70%" flexDirection="column" columnGap={3} sx={{ backgroundColor: "white" }}>
-      <Stack direction="row" width="50%" justifyContent="space-evenly" alignItems="center">
+    <Box
+      alignSelf="center"
+      display="flex"
+      width="70%"
+      flexDirection="column"
+      columnGap={3}
+      sx={{ backgroundColor: "white" }}
+    >
+      <Stack
+        direction="row"
+        width="50%"
+        justifyContent="space-evenly"
+        alignItems="center"
+      >
         <img
           src="/images/books-blue.png"
           alt="Book Rent"
           width="40"
           height="40"
         />
-        <Typography fontSize={24}>
-          Book Rent
-        </Typography>
+        <Typography fontSize={24}>Book Rent</Typography>
       </Stack>
-      <Typography fontSize={24}>
+      <Typography px={2} fontSize={24}>
         Login
       </Typography>
-      <Divider variant="middle" />
+      <Divider sx={{ marginBottom: 2 }} variant="middle" />
       <form onSubmit={handleSubmit}>
         <TextField
           id="email"
@@ -132,6 +163,7 @@ export default function Login() {
           </Link>
         </Typography>
       </form>
+      <SnackBarWrapper  open={!!error || severity ==="success"} message={message} severity = {severity as "error" | "success" | "info" | "warning"}/>
     </Box>
   );
 }

@@ -1,46 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type LoginPayload = {
-    accessToken: string;
-    refreshToken: string;
-    role:string;
+interface AuthState {
+  accessToken: string;
+  role: string;
 }
 
-interface AuthState {
-    accessToken:string;
-    refreshToken:string;
-    loading: boolean;
-    error: any | null;
-    role:string;
-  }
-  
-  const initialState: AuthState = {
-    loading: false,
-    error: null,
-    accessToken: "",
-    refreshToken: "",
-    role:""
-  };
-  
+const initialState: AuthState = {
+  accessToken: "",
+  role: "",
+};
 
 export const authReducer = createSlice({
-    name: "auth",
-    initialState,
-    reducers: {
-        logout: () => {
-        return initialState;
-        },
-        login: (state, action:PayloadAction<LoginPayload> ) => {
-       return {
-        ...state,
-        accessToken : action.payload.accessToken,
-        role : action.payload.role,
-        refreshToken : action.payload.refreshToken,
-        }}
-
+  name: "auth",
+  initialState,
+  reducers: {
+    logout: () => {
+      return initialState;
     },
-    });
+    setCredentials: (state, action: PayloadAction<AuthState>) => {
+      return {
+        ...state,
+        accessToken: action.payload.accessToken,
+        role: action.payload.role,
+      };
+    },
+    clearCredentials: (state) => {
+      return {
+        ...state,
+        accessToken: "",
+        role: "",
+      };
+    },
+  },
+});
 
-export const { login, logout } = authReducer.actions;
+export const {
+  setCredentials,
+  clearCredentials,
+  logout,
+} = authReducer.actions;
 
 export default authReducer.reducer;

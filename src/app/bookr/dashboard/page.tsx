@@ -4,7 +4,8 @@ import HomePage from "../page";
 
 const DashBoard = () => {
   return (
-    <HomePage>
+    // TODO: check the role and add
+    <HomePage path="/dashBoard">
         <Grid height="100%" alignItems="stretch"  container p={0.5} spacing={2}>
           <Grid  item xs={4} lg={4}>
             <Box bgcolor="red" height="100%" p={4}borderRadius={1} boxShadow={2}>
