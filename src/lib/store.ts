@@ -1,15 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/auth/authSlice";
 import { authApi } from "./features/auth/authSevice";
+import { bookApi } from "./features/books/bookService";
+import  bookReducer  from "./features/books/bookSlice";
+import  categoryReducer from "./features/book-category/categorySlice";
+import { categoryApi } from "./features/book-category/categoryService";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
         [authApi.reducerPath]: authApi.reducer,
         authReducer,
+        [bookApi.reducerPath]: bookApi.reducer,
+        bookReducer,
+        [categoryApi.reducerPath]: categoryApi.reducer,
+        categoryReducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(authApi.middleware),
+        getDefaultMiddleware().concat([authApi.middleware, bookApi.middleware, categoryApi.middleware]),
   })
 }
 

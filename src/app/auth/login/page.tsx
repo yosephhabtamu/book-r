@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { set, z } from "zod";
 import { useRouter } from "next/navigation"; // Import useRouter
 import {
@@ -19,6 +19,7 @@ import {
   setCredentials, clearCredentials
 } from "@/lib/features/auth/authSlice";
 import SnackBarWrapper from "@/app/components/snackBar";
+import { useDispatch } from "react-redux";
 
 // Define your Zod schema
 const validationSchema = z.object({
@@ -28,8 +29,10 @@ const validationSchema = z.object({
 });
 
 export default function Login() {
+  const dispatch =  useDispatch();
   const router = useRouter(); // Initialize useRouter for navigation
   const [login, { isLoading, error }] = useLoginMutation();
+  const [response, setResponse] = useState({ accessToken: "", role: "" });
 
   const [severity, setSeverity] = useState("");
   const [message, setMessage] = useState("");
@@ -55,25 +58,31 @@ export default function Login() {
      const isValid =  validationSchema.parse(values);
 
       // Proceed with the login request
-      const response = await login({
+      const result =  await login({
         email: isValid.email,
         password: isValid.password,
       }).unwrap();
-      console.log("Login successful", response);
-      setMessage("Login successful"); 
-      setSeverity("success");
-      setCredentials({
-        accessToken: response.accessToken,
-        role: response.role,
-      });
-      router.push("/bookr/dashboard");
+      setResponse({
+        accessToken: result.token,
+          role: result.role,
+        })
     } catch (err: any) {
       console.error("Unexpected error:", err);
-      clearCredentials();
+      // dispatch(clearCredentials());
       setMessage(err.data.message);
       setSeverity("error");
     }
+    
   };
+
+  useEffect(() => {
+      if(!response.accessToken) return;
+    setMessage("Login successful"); 
+      setSeverity("success");
+      dispatch(setCredentials(response));
+      router.push("/bookr/dashboard");
+  }, [response]);
+
 
   return (
     <Box

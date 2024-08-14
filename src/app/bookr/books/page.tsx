@@ -1,37 +1,41 @@
 "use client";
-import { Box,  ListItemIcon, MenuItem, Typography } from "@mui/material";
+import { Box, ListItemIcon, MenuItem } from "@mui/material";
 import HomePage from "../page";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from "material-react-table";
 import { AccountCircle, Send } from "@mui/icons-material";
+import { BookItem } from "@/app/types/types";
+import { useGetBooksQuery } from "@/lib/features/books/bookService";
 
-export type OwnerTable = {
-  id: string;
-  fullName: string;
-  email: string;
-  location: string;
-  isActive: boolean;
-  upload: number;
-};
+const BooksList = () => {
+  const [data, setData] = useState<BookItem[]>([]); // Provide the type for better type safety
+  const { data: result, isLoading, error } = useGetBooksQuery({
+    page: 1,
+    size: 10,
+  });
 
-const OwnerList = () => {
-    const [data, setData] = useState([]);
-  const columns = useMemo<MRT_ColumnDef<OwnerTable>[]>(
+  useEffect(() => {
+    if (!isLoading && !error && result) {
+      setData(result.books);
+    }
+  }, [result, isLoading, error]);
+
+  const columns = useMemo<MRT_ColumnDef<BookItem>[]>(
     () => [
       {
-        id: "fullName",
+        id: "author",
         header: "List of Books",
         columns: [
           {
-            accessorFn: (row) => `${row.fullName}`,
-            id: "fullName",
-            header: "Owner",
+            accessorFn: (row) => `${row.book.author}`,
+            id: "author",
+            header: "Author",
             size: 200,
-            Cell: ({ renderedCellValue, row }) => (
+            Cell: ({ renderedCellValue }) => (
               <Box
                 sx={{
                   display: "flex",
@@ -44,30 +48,71 @@ const OwnerList = () => {
             ),
           },
           {
-            accessorKey: "upload",
-            header: "upload",
-            size: 100,
-          },
-          {
-            accessorKey: "location", 
-            header: "location",
+            accessorFn: (row) => `${row.user.fullName}`,
+            id: "fullName",
+            header: "Owner",
             size: 200,
+            Cell: ({ renderedCellValue }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>{renderedCellValue}</span>
+              </Box>
+            ),
           },
           {
-            accessorKey: "isActive", //hey a simple column for once
-            header: "status",
-            size: 350,
-            Cell: ({ renderedCellValue, row }) => (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                  }}
-                >
-                  <span>{renderedCellValue}</span>
-                </Box>
-              ),
+            accessorFn: (row) => `${row.book.category.name}`,
+            id: "category",
+            header: "Category",
+            size: 200,
+            Cell: ({ renderedCellValue }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>{renderedCellValue}</span>
+              </Box>
+            ),
+          },
+          {
+            accessorFn: (row) => `${row.book.title}`,
+            id: "bookName",
+            header: "Book Name",
+            size: 200,
+            Cell: ({ renderedCellValue }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>{renderedCellValue}</span>
+              </Box>
+            ),
+          },
+          {
+            accessorKey: "isActive",
+            header: "Status",
+            size: 100,
+            Cell: ({ renderedCellValue }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>{renderedCellValue}</span>
+              </Box>
+            ),
           },
         ],
       },
@@ -77,7 +122,7 @@ const OwnerList = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data,
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableColumnPinning: true,
@@ -85,7 +130,7 @@ const OwnerList = () => {
     enableRowActions: true,
     enableRowSelection: true,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       columnPinning: {
         left: ["mrt-row-expand", "mrt-row-select"],
@@ -108,12 +153,11 @@ const OwnerList = () => {
       <MenuItem
         key={0}
         onClick={() => {
-          // View profile logic...
           closeMenu();
         }}
         sx={{ m: 0 }}
       >
-        <ListItemIcon>
+        <ListItemIcon color="primary" >
           <AccountCircle />
         </ListItemIcon>
         View Profile
@@ -126,20 +170,21 @@ const OwnerList = () => {
         }}
         sx={{ m: 0 }}
       >
-        <ListItemIcon>
+        <ListItemIcon color="primary">
           <Send />
         </ListItemIcon>
         Send Email
       </MenuItem>,
-    ]
+    ],
   });
 
   return (
     <HomePage path="owner/books">
-      <Box component="main" ml="20%" maxWidth="80%" overflow="scroll" >
+      <Box component="main" overflow="hidden" >
         <MaterialReactTable table={table} />
       </Box>
     </HomePage>
   );
 };
-export default OwnerList;
+
+export default BooksList;

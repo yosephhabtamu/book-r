@@ -13,7 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Button } from "@mui/material";
+import { Button, makeStyles } from "@mui/material";
 import Link from "next/link";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
@@ -25,6 +25,8 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { MenuRounded } from "@mui/icons-material";
 import { logout } from "@/lib/features/auth/authSlice";
 import { useRouter } from "next/navigation";
+import { ThemeProvider } from "@emotion/react";
+import { theme } from "../components/theme";
 
 const drawerWidth = 200;
 
@@ -48,15 +50,6 @@ const closedMixin = (theme: Theme): CSSObject => ({
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -101,10 +94,9 @@ export default function HomePage({
   path,
   children,
 }: Readonly<{
-  path:string;
+  path: string;
   children: React.ReactNode;
 }>) {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
 
@@ -115,340 +107,357 @@ export default function HomePage({
   const handleLogout = () => {
     logout();
     router.replace("/auth/login");
-  }
+  };
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
   return (
-    <Box height="100vh" sx={{ display: "flex", gap:1 }}>
-      <CssBaseline />
-      <Drawer
-        variant="permanent"
-        open={open}
-        sx={{
-          "& .MuiDrawer-paper": {
-            maxWidth:"17%",
-            minWidth: "max-content",
-            m: 0.2,
-            p: 1,
-            pl: 2,
-            pr: open? 2:0,
-            borderRadius: 1,
-            bgcolor: "#171b36",
-            color: "white",
-          },
-        }}
-      >
-        <Toolbar disableGutters={true}>
-        <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={open? handleDrawerClose: handleDrawerOpen}
-            edge="start"
-            sx={{
-              maxWidth:"min-content",
-              p:2,
-            }}
-          >
-            <MenuRounded fontSize="small" color="primary" />
-          </IconButton>
-        {open&& (
-          <Box display="flex" gap={0.2} alignItems="center">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={open? handleDrawerClose: handleDrawerOpen}
-            edge="start"
-            sx={{
-              maxWidth:"min-content",
-            }}
-          >
-            <img
-              src="/images/books-blue.png"
-              alt="Book Rent"
-              width="24"
-              height="24"
-            />
-          </IconButton>
-          <Typography>Book Rent</Typography>
-          </Box>)}
-          </Toolbar>
-        {open&&(<Divider variant="middle" color="white"/>)}
-        <List sx={{mt:1}}>
-          <Link
-            href="/bookr/dashboard"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer"},
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <SpaceDashboardRoundedIcon fontSize="small" color="primary" />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={<Typography fontSize="small">Dashboard</Typography>}
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/bookr/upload"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                maxWidth:open? "100%":"min-content",
-                borderRadius: 1,
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <ImportContactsRoundedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={
-                    <Typography fontSize="small">Book Upload</Typography>
-                  }
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/bookr/books"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <MoreHorizRoundedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={<Typography fontSize="small">Books</Typography>}
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/bookr/owner"
-            style={{
-              width:"100%",
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer",width:"100%" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <MoreHorizRoundedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={<Typography fontSize="small">Owners</Typography>}
-                />
-              )}
-            </ListItem>
-          </Link>
-        </List>
-       {open && ( <Divider variant="middle" color = "white" sx={{ my: 2 }} />)}
-        <List sx={{maxwidth:"min-content", mt:1}}>
-          <Link
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            href="/bookr/notifications"
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <NotificationsRoundedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={
-                    <Typography fontSize="small">Notification</Typography>
-                  }
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/bookr/settings"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <SettingsOutlinedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={<Typography fontSize="small">Settings</Typography>}
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/auth/login"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                mt: "auto",
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <AccountCircleOutlinedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={
-                    <Typography fontSize="small">Login as Admin</Typography>
-                  }
-                />
-              )}
-            </ListItem>
-          </Link>
-          <Link
-            href="/auth/login"
-            style={{
-              textDecoration: "none",
-              color: "white",
-            }}
-            passHref
-          >
-            <ListItem
-              sx={{
-                mt: "auto",
-                p: 0.5,
-                borderRadius: 1,
-                maxWidth:open? "100%":"min-content",
-                "&:hover": { bgcolor: "secondary.main", cursor: "pointer" },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0.25 }}>
-                <AccountCircleOutlinedIcon
-                  fontSize="small"
-                  style={{ color: "white" }}
-                />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary={
-                    <Typography fontSize="small">Login as owner</Typography>
-                  }
-                />
-              )}
-            </ListItem>
-          </Link>
-        </List>
-
-        <Divider sx={{ my: 4 }} />
-       
-          {open && (<Button
-            variant="contained"
-            onClick={handleLogout}
-            startIcon={<LogoutRoundedIcon fontSize="small" />}
-            sx={{
-              p:0,
-              py: 0.5,
+    <ThemeProvider theme={theme}>
+      <Box height="100vh" sx={{ display: "flex", gap: 1 }}>
+        <CssBaseline />
+        <Drawer
+          variant="permanent"
+          open={open}
+          sx={{
+            "& .MuiDrawer-paper": {
+              maxWidth: "17%",
+              minWidth: "max-content",
+              m: 0.2,
+              p: 1,
+              pl: 2,
+              pr: open ? 2 : 0,
               borderRadius: 1,
-              bgcolor: "primary.light",
-              color: "black",
-              "&:hover": {
-                bgcolor: "#808080",
-              },
-            }}
+              bgcolor: "#171b36",
+              color: "white",
+            },
+          }}
+        >
+          <Toolbar disableGutters={true}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={open ? handleDrawerClose : handleDrawerOpen}
+              edge="start"
+              sx={{
+                maxWidth: "min-content",
+                p: 2,
+              }}
+            >
+              <MenuRounded fontSize="small"/>
+            </IconButton>
+            {open && (
+              <Box display="flex" gap={0.2} alignItems="center">
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={open ? handleDrawerClose : handleDrawerOpen}
+                  edge="start"
+                  sx={{
+                    maxWidth: "min-content",
+                  }}
+                >
+                  <img
+                    src="/images/books-blue.png"
+                    alt="Book Rent"
+                    width="24"
+                    height="24"
+                  />
+                </IconButton>
+                <Typography color={theme.palette.primary.main}>
+                  Book Rent
+                </Typography>
+              </Box>
+            )}
+          </Toolbar>
+          {open && <Divider variant="middle" color="white" />}
+          <List sx={{ mt: 1 }}>
+            <Link
+              href="/bookr/dashboard"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <SpaceDashboardRoundedIcon fontSize="small" style={{ color: "white" }} />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={
+                      <Typography fontSize="small">Dashboard</Typography>
+                    }
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/bookr/books/upload"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  maxWidth: open ? "100%" : "min-content",
+                  borderRadius: 1,
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <ImportContactsRoundedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={
+                      <Typography fontSize="small">Book Upload</Typography>
+                    }
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/bookr/books"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <MoreHorizRoundedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={<Typography fontSize="small">Books</Typography>}
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/bookr/owner"
+              style={{
+                width: "100%",
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": {
+                    bgcolor: "primary.main",
+                    cursor: "pointer",
+                    width: "100%",
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <MoreHorizRoundedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={<Typography fontSize="small">Owners</Typography>}
+                  />
+                )}
+              </ListItem>
+            </Link>
+          </List>
+          {open && <Divider variant="middle" color="white" sx={{ my: 2 }} />}
+          <List sx={{ maxwidth: "min-content", mt: 1 }}>
+            <Link
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              href="/bookr/notifications"
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <NotificationsRoundedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={
+                      <Typography fontSize="small">Notification</Typography>
+                    }
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/bookr/settings"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <SettingsOutlinedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={<Typography fontSize="small">Settings</Typography>}
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/auth/login"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  mt: "auto",
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <AccountCircleOutlinedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={
+                      <Typography fontSize="small">Login as Admin</Typography>
+                    }
+                  />
+                )}
+              </ListItem>
+            </Link>
+            <Link
+              href="/auth/login"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              passHref
+            >
+              <ListItem
+                sx={{
+                  mt: "auto",
+                  p: 0.5,
+                  borderRadius: 1,
+                  maxWidth: open ? "100%" : "min-content",
+                  "&:hover": { bgcolor: "primary.main", cursor: "pointer" },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0.25 }}>
+                  <AccountCircleOutlinedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={
+                      <Typography fontSize="small">Login as owner</Typography>
+                    }
+                  />
+                )}
+              </ListItem>
+            </Link>
+          </List>
+
+          <Divider sx={{ my: 4 }} />
+
+          {open && (
+            <Button
+              variant="contained"
+              onClick={handleLogout}
+              startIcon={<LogoutRoundedIcon fontSize="small" />}
+              sx={{
+                p: 0,
+                py: 0.5,
+                borderRadius: 1,
+                bgcolor: "primary.light",
+                color: "black",
+                "&:hover": {
+                  bgcolor: "#808080",
+                },
+              }}
+            >
+              <Typography fontSize={13}>Logout</Typography>
+            </Button>
+          )}
+        </Drawer>
+        <Box component="main" height="95%" overflow="hidden" sx={{ flexGrow: 1 }}>
+          <AppBar
+            
+            position="static"
+            sx={{ backgroundColor:"white", color:"black", px: 3, py: 0.5, my: 0.2, mr: 2.5, borderRadius: 1 }}
           >
-            <Typography fontSize={13}>Logout</Typography>
-          </Button>)}
-      </Drawer>
-      <Box component="main" height="95%" sx={{flexGrow:1}}>
-        <AppBar position="static" sx={{px:3, py:0.2, mt:0.2,mr:2.5, borderRadius:1}}>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {path}
-          </Typography>
-        </AppBar>
-        {children}
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              {path}
+            </Typography>
+          </AppBar>
+          {children}
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 }

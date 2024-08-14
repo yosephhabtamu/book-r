@@ -56,7 +56,7 @@ const OwnerList = () => {
           {
             accessorKey: "isActive", //hey a simple column for once
             header: "status",
-            size: 350,
+            size: 100,
             Cell: ({ renderedCellValue, row }) => (
                 <Box
                   sx={{
@@ -85,7 +85,7 @@ const OwnerList = () => {
     enableRowActions: true,
     enableRowSelection: true,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       columnPinning: {
         left: ["mrt-row-expand", "mrt-row-select"],
@@ -135,8 +135,8 @@ const OwnerList = () => {
   });
 
   return (
-    <HomePage path="Owner/Book">
-      <Box component="main" ml="20%" maxWidth="80%" overflow="scroll" >
+    <HomePage path="admin/Owners">
+      <Box component="main"  >
         <MaterialReactTable table={table} />
       </Box>
     </HomePage>

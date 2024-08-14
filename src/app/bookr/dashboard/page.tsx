@@ -1,5 +1,5 @@
 "use client";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import HomePage from "../page";
 
 const DashBoard = () => {
@@ -8,7 +8,7 @@ const DashBoard = () => {
     <HomePage path="/dashBoard">
         <Grid height="100%" alignItems="stretch"  container p={0.5} spacing={2}>
           <Grid  item xs={4} lg={4}>
-            <Box bgcolor="red" height="100%" p={4}borderRadius={1} boxShadow={2}>
+            <Box bgcolor="primary" height="100%" p={4}borderRadius={1} boxShadow={2}>
               {/* Content here */}
             </Box>
           </Grid>

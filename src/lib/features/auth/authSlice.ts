@@ -18,8 +18,8 @@ export const authReducer = createSlice({
       return initialState;
     },
     setCredentials: (state, action: PayloadAction<AuthState>) => {
+      console.log(action.payload);
       return {
-        ...state,
         accessToken: action.payload.accessToken,
         role: action.payload.role,
       };
@@ -31,13 +31,15 @@ export const authReducer = createSlice({
         role: "",
       };
     },
+    getTokens: (state) => {
+      console.log(state);
+      return {
+        ...state,
+      };
+    },
   },
 });
 
-export const {
-  setCredentials,
-  clearCredentials,
-  logout,
-} = authReducer.actions;
+export const { setCredentials, clearCredentials, logout, getTokens } = authReducer.actions;
 
 export default authReducer.reducer;
