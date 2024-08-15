@@ -22,7 +22,6 @@ import {
   setCredentials,
 } from "@/lib/features/auth/authSlice";
 import { AuthContext, AuthProvider, useAuth } from "@/app/components/authProvider";
-import useAuthRouter from "@/hooks/useAuthRouter";
 
 // Define your Zod schema
 const validationSchema = z.object({
@@ -32,8 +31,8 @@ const validationSchema = z.object({
 });
 
 export default function Login() {
-  const { token, setToken, setRole } = useContext(AuthContext);
-  const router = useRouter(); // Initialize useRouter for navigation
+  const { token, role, setToken, setRole } = useContext(AuthContext);
+  const router = useRouter(); 
   const [login, { isLoading, error }] = useLoginMutation();
 
   const [severity, setSeverity] = useState("");
@@ -64,20 +63,19 @@ export default function Login() {
       }).unwrap();
       setToken(result.token);
       setRole(result.role);
-      useAuthRouter( "/bookr/dashboard");
     } catch (err: any) {
       console.error("Unexpected error:", err);
-      setMessage(err.message);
+      setMessage(err.message??err.data.message);
       setSeverity("error");
     }
   };
 
   useEffect(() => {
-    setMessage("Login successful");
+    if(token && role)
+    {setMessage("Login successful");
     setSeverity("success");
-    router.push("/bookr/dashboard");
-  }); 
-
+    router.push("/bookr/dashboard");}
+}, [token, role ]);
   return (
     <Box
       alignSelf="center"

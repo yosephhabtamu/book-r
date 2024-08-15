@@ -22,14 +22,16 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import { MenuRounded } from "@mui/icons-material";
+import { LegendToggle, MenuRounded } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "@emotion/react";
 import { theme } from "../components/theme";
 import { logout } from "@/lib/features/auth/authSlice";
-import useAuthRouter from "@/hooks/useAuthRouter";
 import { AuthProvider, useAuth } from "../components/authProvider";
 import { useEffect } from "react";
+import { useAbility } from "../components/abilityProvider";
+import { Can } from "@casl/react";
+import { Spinner } from "../components/spinner";
 
 const drawerWidth = 200;
 
@@ -101,23 +103,38 @@ export default function HomePage({
   children: React.ReactNode;
 }>) {
 
-  const{token} = useAuth(); 
-
-  useEffect(() => {
-    console.log("token", token);
-  }, []);
-
-  
-  
   const [open, setOpen] = React.useState(true);
+  const  [isAuth, setIsAuth] = React.useState(false); 
   const router = useRouter();
+  const{token, role, setToken, setRole} = useAuth(); 
+  const ability = useAbility(role);
+
+
+  useEffect(() => {      
+    if(token && ability) {
+      setIsAuth(true);
+    }
+    else{
+      setIsAuth(false); 
+    router.replace("/auth/login");
+
+    }
+  }, [token, ability]);
+
+  if(!isAuth) {
+    return <>
+    <Spinner />
+    <Typography fontSize={14}sx={{ m:"auto", maxWidth:"min-content"}} fontWeight={700}>Redirecting...</Typography>
+    </>
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleLogout = () => {
-    logout();
+    setToken("");
+    setRole("");
     router.replace("/auth/login");
   };
   const handleDrawerClose = () => {
@@ -215,6 +232,7 @@ export default function HomePage({
                 )}
               </ListItem>
             </Link>
+            <Can I="create" a="Books" ability={ability.ability}>
             <Link
               href="/bookr/books/upload"
               style={{
@@ -244,8 +262,10 @@ export default function HomePage({
                     }
                   />
                 )}
-              </ListItem>
+              </ListItem>  
             </Link>
+            </Can>
+            <Can I="read" a="Books" ability={ability.ability}>
             <Link
               href="/bookr/books"
               style={{
@@ -275,6 +295,8 @@ export default function HomePage({
                 )}
               </ListItem>
             </Link>
+            </Can>
+            <Can I="read" a="Users" ability={ability.ability}>
             <Link
               href="/bookr/owner"
               style={{
@@ -309,6 +331,7 @@ export default function HomePage({
                 )}
               </ListItem>
             </Link>
+            </Can>
           </List>
           {open && <Divider variant="middle" color="white" sx={{ my: 2 }} />}
           <List sx={{ maxwidth: "min-content", mt: 1 }}>
