@@ -18,7 +18,6 @@ export const authReducer = createSlice({
       return initialState;
     },
     setCredentials: (state, action: PayloadAction<AuthState>) => {
-      console.log(action.payload);
       return {
         accessToken: action.payload.accessToken,
         role: action.payload.role,
@@ -32,7 +31,6 @@ export const authReducer = createSlice({
       };
     },
     getTokens: (state) => {
-      console.log(state);
       return {
         ...state,
       };

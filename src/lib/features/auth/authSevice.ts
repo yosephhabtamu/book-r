@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from "../../store"
+import { getTokens } from './authSlice';
+import { useSelector } from 'react-redux';
 // Update this path according to your project structure
 
 // Define a service using a base URL and expected endpoints
@@ -8,8 +10,9 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:9999/api/auth',
     prepareHeaders: (headers, { getState }) => {
-      const state = getState() as RootState; // Explicitly typing getState
-      const token = state.authReducer.accessToken;
+      console.log("before disaster")
+      const token = getState();
+      console.log(token);
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }

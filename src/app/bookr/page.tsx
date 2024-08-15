@@ -23,10 +23,13 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { MenuRounded } from "@mui/icons-material";
-import { logout } from "@/lib/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "@emotion/react";
 import { theme } from "../components/theme";
+import { logout } from "@/lib/features/auth/authSlice";
+import useAuthRouter from "@/hooks/useAuthRouter";
+import { AuthProvider, useAuth } from "../components/authProvider";
+import { useEffect } from "react";
 
 const drawerWidth = 200;
 
@@ -97,6 +100,15 @@ export default function HomePage({
   path: string;
   children: React.ReactNode;
 }>) {
+
+  const{token} = useAuth(); 
+
+  useEffect(() => {
+    console.log("token", token);
+  }, []);
+
+  
+  
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
 
@@ -144,7 +156,7 @@ export default function HomePage({
                 p: 2,
               }}
             >
-              <MenuRounded fontSize="small"/>
+              <MenuRounded fontSize="small" />
             </IconButton>
             {open && (
               <Box display="flex" gap={0.2} alignItems="center">
@@ -189,7 +201,10 @@ export default function HomePage({
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 0.25 }}>
-                  <SpaceDashboardRoundedIcon fontSize="small" style={{ color: "white" }} />
+                  <SpaceDashboardRoundedIcon
+                    fontSize="small"
+                    style={{ color: "white" }}
+                  />
                 </ListItemIcon>
                 {open && (
                   <ListItemText
@@ -445,11 +460,23 @@ export default function HomePage({
             </Button>
           )}
         </Drawer>
-        <Box component="main" height="95%" overflow="hidden" sx={{ flexGrow: 1 }}>
+        <Box
+          component="main"
+          height="95%"
+          overflow="hidden"
+          sx={{ flexGrow: 1 }}
+        >
           <AppBar
-            
             position="static"
-            sx={{ backgroundColor:"white", color:"black", px: 3, py: 0.5, my: 0.2, mr: 2.5, borderRadius: 1 }}
+            sx={{
+              backgroundColor: "white",
+              color: "black",
+              px: 3,
+              py: 0.5,
+              my: 0.2,
+              mr: 2.5,
+              borderRadius: 1,
+            }}
           >
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {path}
@@ -460,4 +487,5 @@ export default function HomePage({
       </Box>
     </ThemeProvider>
   );
+  
 }

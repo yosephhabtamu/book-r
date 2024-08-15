@@ -19,7 +19,6 @@ export interface Category {
     fullName: string;
     location: string;
     phoneNumber: string;
-    password: string;
     role: string;
     isActive: boolean;
     wallet: number;
@@ -40,5 +39,25 @@ export interface Category {
     totalPages: number;
     currentPage: number;
     books: BookItem[];
+  }
+
+  export interface BookOwner {
+    id: string;
+    fullName: string;
+    email: string;
+    location: string;
+    isActive: boolean;
+   _count: {
+        books: number;
+    };
+    wallet: number;
+  };
+  
+
+  export interface GetBookOwnersResponse {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    users: BookOwner[];
   }
   

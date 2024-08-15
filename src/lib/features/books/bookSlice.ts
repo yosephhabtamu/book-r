@@ -4,8 +4,8 @@ import { set } from "zod";
 
 
 interface BookState {
-  books: BookResponse;
-  usersBooks: BookResponse;
+  books?: BookResponse;
+  usersBooks?: BookResponse;
 }
 
 const initialState: BookState = {
@@ -27,8 +27,8 @@ export const bookReducer = createSlice({
   name: "book",
   initialState,
   reducers: {
-    getBooks: () => {
-      return initialState;
+    getusersBooks: (state) => {
+      return {books: state.usersBooks};
     },
     setBooks: (state, action: PayloadAction<BookResponse>) => {
       return {
@@ -47,7 +47,7 @@ export const bookReducer = createSlice({
 });
 
 export const {
-    getBooks,
+    getusersBooks,
     setBooks,
     setUsersBooks,
 } = bookReducer.actions;

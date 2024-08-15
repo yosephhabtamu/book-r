@@ -1,26 +1,34 @@
 "use client";
-import { Box,  ListItemIcon, MenuItem, Typography } from "@mui/material";
+import { Box, ListItemIcon, MenuItem, Switch, Typography } from "@mui/material";
 import HomePage from "../page";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from "material-react-table";
 import { AccountCircle, Send } from "@mui/icons-material";
-
-export type OwnerTable = {
-  id: string;
-  fullName: string;
-  email: string;
-  location: string;
-  isActive: boolean;
-  upload: number;
-};
+import { BookOwner } from "@/app/types/types";
+import { useGetUsersQuery } from "@/lib/features/user/userSevice";
+import { Spinner } from "@/app/components/spinner";
 
 const OwnerList = () => {
-    const [data, setData] = useState([]);
-  const columns = useMemo<MRT_ColumnDef<OwnerTable>[]>(
+  const [data, setData] = useState<BookOwner[]>([]);
+  const {
+    data: result,
+    isLoading,
+    error,
+  } = useGetUsersQuery({
+    page: 1,
+    size: 10,
+  });
+
+  useEffect(() => {
+    if (!isLoading && !error && result) {
+      setData(result.users);
+    }
+  }, [result, isLoading, error]);
+  const columns = useMemo<MRT_ColumnDef<BookOwner>[]>(
     () => [
       {
         id: "fullName",
@@ -28,10 +36,11 @@ const OwnerList = () => {
         columns: [
           {
             accessorFn: (row) => `${row.fullName}`,
-            id: "fullName", //id is still required when using accessorFn instead of accessorKey
+            id: "fullName", 
             header: "Owner",
             size: 200,
-            Cell: ({ renderedCellValue, row }) => (
+            Cell: ({ renderedCellValue, row }) =>{
+              return (
               <Box
                 sx={{
                   display: "flex",
@@ -41,15 +50,28 @@ const OwnerList = () => {
               >
                 <span>{renderedCellValue}</span>
               </Box>
-            ),
+            )}
           },
           {
-            accessorKey: "upload",
+            accessorfn: (row:any) => `${row.wallet}`,  
+            id:"wallet",
             header: "upload",
             size: 100,
+            Cell: ({ renderedCellValue, row }) =>{
+              return (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>{row.original._count.books}</span>
+              </Box>
+            )}
           },
           {
-            accessorKey: "location", 
+            accessorKey: "location",
             header: "location",
             size: 200,
           },
@@ -58,16 +80,16 @@ const OwnerList = () => {
             header: "status",
             size: 100,
             Cell: ({ renderedCellValue, row }) => (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                  }}
-                >
-                  <span>{renderedCellValue}</span>
-                </Box>
-              ),
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
+                <Switch color="secondary" checked = {row.original.isActive}></Switch>
+              </Box>
+            ),
           },
         ],
       },
@@ -131,12 +153,12 @@ const OwnerList = () => {
         </ListItemIcon>
         Send Email
       </MenuItem>,
-    ]
+    ],
   });
 
   return (
     <HomePage path="admin/Owners">
-      <Box component="main"  >
+      <Box component="main">
         <MaterialReactTable table={table} />
       </Box>
     </HomePage>

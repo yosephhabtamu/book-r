@@ -1,16 +1,13 @@
-// Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from "../../store"
+import { getTokens } from '../auth/authSlice';
+import { useSelector } from 'react-redux';
 
-// Define a service using a base URL and expected endpoints
 export const bookApi = createApi({
   reducerPath: 'bookApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9999/api/books',
-    prepareHeaders: (headers, { getState }) => {
-        const state = getState() as RootState; 
-        const token = state.authReducer.accessToken;
-        console.log("**********");
-        console.log(state);
+    prepareHeaders: (headers) => {
+        const token = useSelector((state:RootState)=>state.authReducer.accessToken);
         if (token) {
           headers.set('authorization', `Bearer ${token}`);
         }

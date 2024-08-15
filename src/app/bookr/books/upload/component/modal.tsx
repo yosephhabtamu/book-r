@@ -4,9 +4,7 @@ import { useEffect } from "react";
 
 export function AddBookModal(props: Readonly<{open:boolean, handleClose:any}>){
     useEffect   (() => {
-        console.log("AddBookModal mounted");
         return () => {
-            console.log("AddBookModal unmounted");
         }
     }
     ,[])

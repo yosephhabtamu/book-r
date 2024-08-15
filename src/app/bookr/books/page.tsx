@@ -10,10 +10,16 @@ import {
 import { AccountCircle, Send } from "@mui/icons-material";
 import { BookItem } from "@/app/types/types";
 import { useGetBooksQuery } from "@/lib/features/books/bookService";
+import { getusersBooks, setBooks } from "@/lib/features/books/bookSlice";
+import { useDispatch } from "react-redux";
 
 const BooksList = () => {
   const [data, setData] = useState<BookItem[]>([]); // Provide the type for better type safety
-  const { data: result, isLoading, error } = useGetBooksQuery({
+  const {
+    data: result,
+    isLoading,
+    error,
+  } = useGetBooksQuery({
     page: 1,
     size: 10,
   });
@@ -157,14 +163,14 @@ const BooksList = () => {
         }}
         sx={{ m: 0 }}
       >
-        <ListItemIcon color="primary" >
+        <ListItemIcon color="primary">
           <AccountCircle />
         </ListItemIcon>
         View Profile
       </MenuItem>,
       <MenuItem
         key={1}
-        onClick={() => {
+        onClick={(event: any) => {
           // Send email logic...
           closeMenu();
         }}
@@ -180,7 +186,7 @@ const BooksList = () => {
 
   return (
     <HomePage path="owner/books">
-      <Box component="main" overflow="hidden" >
+      <Box component="main" overflow="hidden">
         <MaterialReactTable table={table} />
       </Box>
     </HomePage>

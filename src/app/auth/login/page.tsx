@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { set, z } from "zod";
 import { useRouter } from "next/navigation"; // Import useRouter
 import {
@@ -15,11 +15,14 @@ import {
   Stack,
 } from "@mui/material";
 import { useLoginMutation } from "@/lib/features/auth/authSevice";
-import {
-  setCredentials, clearCredentials
-} from "@/lib/features/auth/authSlice";
 import SnackBarWrapper from "@/app/components/snackBar";
 import { useDispatch } from "react-redux";
+import {
+  clearCredentials,
+  setCredentials,
+} from "@/lib/features/auth/authSlice";
+import { AuthContext, AuthProvider, useAuth } from "@/app/components/authProvider";
+import useAuthRouter from "@/hooks/useAuthRouter";
 
 // Define your Zod schema
 const validationSchema = z.object({
@@ -29,10 +32,9 @@ const validationSchema = z.object({
 });
 
 export default function Login() {
-  const dispatch =  useDispatch();
+  const { token, setToken, setRole } = useContext(AuthContext);
   const router = useRouter(); // Initialize useRouter for navigation
   const [login, { isLoading, error }] = useLoginMutation();
-  const [response, setResponse] = useState({ accessToken: "", role: "" });
 
   const [severity, setSeverity] = useState("");
   const [message, setMessage] = useState("");
@@ -42,7 +44,6 @@ export default function Login() {
     password: "",
     rememberMe: false,
   });
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -55,34 +56,27 @@ export default function Login() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-     const isValid =  validationSchema.parse(values);
-
+      const isValid = validationSchema.parse(values);
       // Proceed with the login request
-      const result =  await login({
+      const result = await login({
         email: isValid.email,
         password: isValid.password,
       }).unwrap();
-      setResponse({
-        accessToken: result.token,
-          role: result.role,
-        })
+      setToken(result.token);
+      setRole(result.role);
+      useAuthRouter( "/bookr/dashboard");
     } catch (err: any) {
       console.error("Unexpected error:", err);
-      // dispatch(clearCredentials());
-      setMessage(err.data.message);
+      setMessage(err.message);
       setSeverity("error");
     }
-    
   };
 
   useEffect(() => {
-      if(!response.accessToken) return;
-    setMessage("Login successful"); 
-      setSeverity("success");
-      dispatch(setCredentials(response));
-      router.push("/bookr/dashboard");
-  }, [response]);
-
+    setMessage("Login successful");
+    setSeverity("success");
+    router.push("/bookr/dashboard");
+  }); 
 
   return (
     <Box
@@ -172,7 +166,11 @@ export default function Login() {
           </Link>
         </Typography>
       </form>
-      <SnackBarWrapper  open={!!error || severity ==="success"} message={message} severity = {severity as "error" | "success" | "info" | "warning"}/>
+      <SnackBarWrapper
+        open={!!error || severity === "success"}
+        message={message}
+        severity={severity as "error" | "success" | "info" | "warning"}
+      />
     </Box>
   );
 }

@@ -70,7 +70,6 @@ const UploadNewBook: React.FC = () => {
   };
 
   const handleOpen = () => {
-    console.log("it clicked")
     setOpen(true);
   };
 
